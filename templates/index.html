@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caps Off For Future - Digital Yearbook</title>
+
+    <!-- Intro.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dynamic Background Animations */
+        .dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #4f46e5, #764ba2, #f093fb, #facc15);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating Elements */
+        .floating-caps {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-cap {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: floatUp 20s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Flying Caps Animation */
+        .flying-caps {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            display: none;
+        }
+
+        .flying-cap {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0;
+            bottom: -50px;
+        }
+
+        @keyframes flyUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-50vh) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1.5);
+            }
+        }
+
+        /* Page Container */
+        .page {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        #profilePage.page.active {
+            background: transparent;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Neumorphic Cards */
+        .neumorphic-card {
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            border-radius: 20px;
+            box-shadow:
+                20px 20px 60px #d1d1d1,
+                -20px -20px 60px #ffffff,
+                inset 5px 5px 10px rgba(0, 0, 0, 0.1),
+                inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .neumorphic-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow:
+                25px 25px 70px #c5c5c5,
+                -25px -25px 70px #ffffff,
+                inset 7px 7px 15px rgba(0, 0, 0, 0.15),
+                inset -7px -7px 15px rgba(255, 255, 255, 0.9);
+        }
+
+        /* Honor frames */
+        .honor-frame {
+            background: linear-gradient(135deg, #3c361c, #f59e0b);
+            border-radius: 15px;
+            padding: 3px;
+            box-shadow: 0 10px 30px rgba(250, 204, 21, 0.3);
+        }
+
+        .honor-frame-inner {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* Initial Prompt Page */
+        .prompt-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .prompt-content {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .prompt-header {
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .prompt-header .icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .prompt-header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .prompt-header p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .prompt-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .prompt-btn {
+            padding: 1.5rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prompt-btn-graduated {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+
+        .prompt-btn-current {
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            color: #1f2937;
+        }
+
+        .prompt-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-content {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .login-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .btn-graduated {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+
+        .btn-current {
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            color: #1f2937;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #facc15;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-outline {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-btn {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border: 1px solid white;
+            color: white;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Search Styles */
+        .search-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem 1.2rem 4rem;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 3.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Grid Layouts */
+        .batches-grid,
+        .branches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .batch-card,
+        .branch-card {
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .batch-card::before,
+        .branch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .batch-card:hover::before,
+        .branch-card:hover::before {
+            left: 100%;
+        }
+
+        .batch-card:hover,
+        .branch-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .batch-card .icon,
+        .branch-card .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .batch-card h3,
+        .branch-card h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .batch-card p,
+        .branch-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+
+        /* Page Navigation */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Creators Dropdown */
+        .creators-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(213, 202, 202, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 0rem 0.5rem;
+            min-width: 400px;
+            margin-top: 0.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .creators-dropdown.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .creator-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .creator-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 20%;
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgb(237, 224, 224);
+            font-weight: 700;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .creator-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20%;
+            object-position: center center;
+        }
+
+        .creator-info h4 {
+            font-weight: 600;
+            color: #090b10;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .creator-info p {
+            color: #32373f;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .creator-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .creator-link {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #7f8592;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .creator-link:hover {
+            transform: scale(1.1);
+            background: #4f46e5;
+            color: rgb(113, 108, 108);
+        }
+
+        /* Honor Sections */
+        .honor-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .honor-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #facc15;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(250, 204, 21, 0.3);
+        }
+
+        .honor-student {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(245, 158, 11, 0.1));
+            border-radius: 15px;
+            border: 2px solid rgba(250, 204, 21, 0.3);
+        }
+
+        .honor-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgb(252, 248, 248);
+            font-size: 3rem;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(250, 204, 21, 0.3);
+        }
+
+        .honor-details h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: rgb(19, 13, 13);
+            margin-bottom: 0.5rem;
+        }
+
+        .honor-details p {
+            color: rgba(19, 14, 14, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .honor-quote {
+            font-style: italic;
+            color: #b3910b;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .prompt-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .creators-dropdown {
+                min-width: 300px;
+                right: -50px;
+            }
+
+            .honor-student {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .prompt-buttons {
+                max-width: 100%;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #4f46e5, #facc15);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #6366f1, #fbbf24);
+        }
+
+        /* --- START: Profile Page Custom CSS --- */
+        .profile-page-container {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #eff6ff, #eef2ff, #f5f3ff);
+            padding: 1rem;
+            font-family: 'Inter', sans-serif;
+            color: #111827;
+        }
+
+        .profile-content-wrapper {
+            max-width: 896px;
+            /* 56rem */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .profile-back-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .profile-main-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-header-new {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .profile-avatar-container {
+            position: relative;
+        }
+
+        .profile-avatar-new {
+            width: 8rem;
+            height: 8rem;
+            border-radius: 9999px;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-avatar-new span {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .profile-add-photo-btn {
+            position: absolute;
+            bottom: -0.25rem;
+            right: -0.25rem;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            background-color: #1e3a8a;
+            color: #f8fafc;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .profile-add-photo-btn:hover {
+            background-color: #1e40af;
+            transform: scale(1.1);
+        }
+
+        .profile-add-photo-btn svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .profile-info-new {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .profile-info-new h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info-new p {
+            color: #4b5563;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-info-new .roll-number {
+            font-size: 1.125rem;
+        }
+
+        .profile-info-new .email {
+            margin-bottom: 1rem;
+        }
+
+        .profile-info-new .edit-instructions {
+            font-size: 0.875rem;
+            color: #2563eb;
+        }
+
+        .profile-fields-container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-field-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+        }
+
+        .profile-field-item .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .profile-field-item .icon-linkedin {
+            color: #0a66c2;
+        }
+
+        .profile-field-item .icon-instagram {
+            color: #e1306c;
+        }
+
+        .profile-field-item .icon-phone {
+            color: #16a34a;
+        }
+
+        .profile-field-content-new {
+            flex-grow: 1;
+        }
+
+        .profile-field-content-new label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .profile-field-content-new .content-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+        }
+
+        .profile-field-content-new p {
+            color: #4b5563;
+            word-break: break-all;
+        }
+        
+        .profile-field-content-new input {
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+        
+        .profile-field-content-new .save-btn {
+            padding: 4px 12px;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .profile-field-content-new .save-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+
+        .profile-edit-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .profile-edit-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .profile-edit-btn svg {
+            width: 1rem;
+            height: 1rem;
+            color: #4b5563;
+        }
+
+        .profile-quote-item {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(to right, #eff6ff, #f5f3ff);
+        }
+
+        .profile-quote-item .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-quote-item label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .profile-quote-item blockquote {
+            font-style: italic;
+            color: #374151;
+            border-left: 4px solid #bfdbfe;
+            padding-left: 1rem;
+            margin: 0;
+        }
+
+        .profile-readonly-notice {
+            display: none;
+            /* Hidden by default, shown by JS */
+            text-align: center;
+            padding: 1rem;
+            background-color: #fefce8;
+            border: 1px solid #fde68a;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .profile-readonly-notice p {
+            color: #854d0e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .profile-readonly-notice svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* The JS uses this class to hide/show all edit controls */
+        .edit-controls {
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .profile-header-new {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .profile-info-new {
+                text-align: left;
+            }
+        }
+
+        /* --- END: Profile Page Custom CSS --- */
+    </style>
+</head>
+
+<body>
+    <!-- Dynamic Background -->
+    <div class="dynamic-bg"></div>
+
+    <!-- Floating Graduation Caps -->
+    <div class="floating-caps" id="floatingCapsContainer"></div>
+
+    <!-- Flying Caps Animation -->
+    <div class="flying-caps" id="flyingCapsContainer"></div>
+
+    <!-- Initial Prompt Page -->
+    <div class="page active" id="promptPage">
+        <div class="prompt-container">
+            <div class="prompt-content">
+                <div class="prompt-header">
+                    <div class="icon">🎓</div>
+                    <h1>Cap's Off For Future</h1>
+                    <p>Celebrating memories, inspiring futures</p>
+                    <p style="font-size: 1.1rem; margin-top: 1rem;">Are you a Graduated Student or a Current Student?
+                    </p>
+                </div>
+
+                <div class="prompt-buttons">
+                    <button class="prompt-btn prompt-btn-graduated" onclick="showLoginPage('graduated')">
+                        <span style="font-size: 1.5rem;">🧑‍🎓</span>
+                        Graduated Student
+                    </button>
+                    <button class="prompt-btn prompt-btn-current" onclick="showLoginPage('current')">
+                        <span style="font-size: 1.5rem;">🧑‍💼</span>
+                        Current Student
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graduated Students Login Page -->
+    <div class="page" id="graduatedLoginPage">
+        <div class="login-container">
+            <div class="login-content">
+                <div class="login-header">
+                    <div class="icon">🎓</div>
+                    <h1>Welcome Back, Graduate!</h1>
+                    <p>Access your alumni profile and share your journey</p>
+                </div>
+
+                <div class="login-card glass-card">
+                    <form onsubmit="login(event, 'graduated')">
+                        <div class="form-group">
+                            <label class="form-label" for="grad-roll">Roll Number</label>
+                            <div class="input-group">
+                                <span class="input-icon">👤</span>
+                                <input type="text" id="grad-roll" class="form-input"
+                                    placeholder="Enter your roll number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="grad-password">Password</label>
+                            <div class="input-group">
+                                <span class="input-icon">🔒</span>
+                                <input type="password" id="grad-password" class="form-input"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-graduated">Login as Graduate</button>
+                        <div class="forgot-password">
+                            <a href="#" onclick="showAlert('Password recovery coming soon!')">Forgot password?</a>
+                        </div>
+                    </form>
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn-outline" onclick="goBackToPrompt()"
+                            style="border: none; background: rgba(255,255,255,0.1);">
+                            ← Back to Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Students Login Page -->
+    <div class="page" id="currentLoginPage">
+        <div class="login-container">
+            <div class="login-content">
+                <div class="login-header">
+                    <div class="icon">🧑‍💼</div>
+                    <h1>Welcome, Student!</h1>
+                    <p>Explore alumni stories and get inspired</p>
+                </div>
+
+                <div class="login-card glass-card">
+                    <form onsubmit="login(event, 'current')">
+                        <div class="form-group">
+                            <label class="form-label" for="current-roll">Roll Number</label>
+                            <div class="input-group">
+                                <span class="input-icon">👤</span>
+                                <input type="text" id="current-roll" class="form-input"
+                                    placeholder="Enter your roll number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="current-password">Password</label>
+                            <div class="input-group">
+                                <span class="input-icon">🔒</span>
+                                <input type="password" id="current-password" class="form-input"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-current">Login as Current Student</button>
+                        <div class="forgot-password">
+                            <a href="#" onclick="showAlert('Password recovery coming soon!')">Forgot password?</a>
+                        </div>
+                    </form>
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn-outline" onclick="goBackToPrompt()"
+                            style="border: none; background: rgba(255,255,255,0.1);">
+                            ← Back to Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div class="page" id="homePage">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1>Cap's Off For Future 🎓</h1>
+                <div class="header-buttons">
+                    <div style="position: relative;">
+                        <button class="btn-outline" onclick="toggleCreators()" id="creatorsBtn">
+                            <span>👨🏻‍🎨</span>
+                            Creators
+                        </button>
+                        <div class="creators-dropdown neumorphic-card" id="creatorsDropdown">
+                            <div class="creator-card">
+                                <div class="creator-avatar">
+                                    <img src="/static/images/vamaharsha.jpeg" alt="VamaHarsha">
+                                </div>
+                                <div class="creator-info">
+                                    <h4>VamaHarsha</h4>
+                                    <p>22A81A0431</p>
+                                    <p>Team Lead & Frontend Developer</p>
+                                    <div class="creator-links">
+                                        <a href="#" class="creator-link">📧</a>
+                                        <a href="#" class="creator-link">🔗</a>
+                                        <a href="#" class="creator-link">📞</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="creator-card">
+                                <div class="creator-avatar">
+                                    <img src="/static/images/harsha.jpeg" alt="Karthik">
+                                </div>
+                                <div class="creator-info">
+                                    <h4>Karthik</h4>
+                                    <p>22A81A04I0</p>
+                                    <p>UI Designer</p>
+                                    <div class="creator-links">
+                                        <a href="#" class="creator-link">📧</a>
+                                        <a href="#" class="creator-link">🔗</a>
+                                        <a href="#" class="creator-link">📞</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="creator-card">
+                                <div class="creator-avatar">
+                                    <img src="/static/images/venkatsai.jpeg" alt="Venkatsai">
+                                </div>
+                                <div class="creator-info">
+                                    <h4>Venkatsai</h4>
+                                    <p>22A81A0490</p>
+                                    <p>Backend Developer</p>
+                                    <div class="creator-links">
+                                        <a href="#" class="creator-link">📧</a>
+                                        <a href="#" class="creator-link">🔗</a>
+                                        <a href="#" class="creator-link">📞</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="creator-card">
+                                <div class="creator-avatar">
+                                    <img src="/static/images/syam.jpeg" alt="Syam">
+                                </div>
+                                <div class="creator-info">
+                                    <h4>Syam</h4>
+                                    <p>22A81A0462</p>
+                                    <p>UI Designer</p>
+                                    <div class="creator-links">
+                                        <a href="#" class="creator-link">📧</a>
+                                        <a href="#" class="creator-link">🔗</a>
+                                        <a href="#" class="creator-link">📞</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-outline" onclick="showSuggestions()">
+                        <span>💬</span>
+                        Suggestions
+                    </button>
+                    <button class="btn-outline" onclick="logout()">
+                        <span>🚪</span>
+                        Logout
+                    </button>
+                    <button class="profile-btn" onclick="showProfilePage()">
+                        👤
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search students, batches, or branches..."
+                    id="searchInput">
+            </div>
+
+            <div class="content-grid">
+                <!-- Batches Section -->
+                <div class="batches-section">
+                    <h2 class="section-title">Graduated Batches</h2>
+                    <div class="batches-grid" id="batchesGrid">
+                        <!-- Batch cards will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Student Memories Sidebar -->
+                <div class="glass-card" style="padding: 0; max-height: 600px; overflow: hidden;">
+                    <div
+                        style="padding: 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.2); background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(250, 204, 21, 0.3));">
+                        <h3
+                            style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: white; font-size: 1.5rem;">
+                            <span>💬</span>
+                            Student Memories
+                        </h3>
+                    </div>
+                    <div style="padding: 1.5rem; max-height: 400px; overflow-y: auto;">
+                        <div
+                            style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div
+                                    style="width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #facc15); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; flex-shrink: 0;">
+                                    E</div>
+                                <div>
+                                    <p
+                                        style="font-style: italic; margin-bottom: 0.8rem; color: white; line-height: 1.6;">
+                                        "College taught me that learning never stops, and neither should our dreams."
+                                    </p>
+                                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">- Emma Davis, Batch
+                                        2023</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div
+                                    style="width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #facc15); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; flex-shrink: 0;">
+                                    R</div>
+                                <div>
+                                    <p
+                                        style="font-style: italic; margin-bottom: 0.8rem; color: white; line-height: 1.6;">
+                                        "The best investment you can make is in your education and relationships."</p>
+                                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">- Ryan Martinez,
+                                        Batch 2022</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Details Page -->
+    <div class="page" id="batchPage">
+        <div class="main-content">
+            <div class="page-header">
+                <a href="#" class="back-btn" onclick="goToHome()">
+                    <span>←</span>
+                    Back to Home
+                </a>
+                <h2 class="page-title" id="batchPageTitle"></h2>
+                <p class="page-subtitle">Explore branches and celebrate achievements</p>
+            </div>
+
+            <!-- Roll of Honor Section -->
+            <div class="honor-section" id="batchHonorSection">
+                <!-- Dynamically populated -->
+            </div>
+
+            <h3 class="section-title">Select Branch</h3>
+            <div class="branches-grid" id="branchesGrid">
+            <div class="branch-card glass-card" onclick="selectBranch('CSE')">
+                            <div class="icon">💻</div>
+                            <h3>CSE</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('CST')">
+                            <div class="icon">💻</div>
+                            <h3>CST</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('ECE')">
+                            <div class="icon">📡</div>
+                            <h3>ECE</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('ECT')">
+                            <div class="icon">🛰️</div>
+                            <h3>ECT</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('EEE')">
+                            <div class="icon">⚡️</div>
+                            <h3>EEE</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('CAI')">
+                            <div class="icon">🖥️</div>
+                            <h3>CAI</h3>
+            </div>
+            <div class="branch-card glass-card" onclick="selectBranch('AML')">
+                            <div class="icon">🤖</div>
+                            <h3>AML</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('MECH')">
+                            <div class="icon">⚙️</div>
+                            <h3>MECH</h3>
+                        </div>
+            <div class="branch-card glass-card" onclick="selectBranch('CIVIL')">
+                            <div class="icon">🏗️</div>
+                            <h3>CIVIL</h3>
+                        </div>
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Branch Details Page -->
+    <div class="page" id="branchPage">
+        <div class="main-content">
+            <div class="page-header">
+                <a href="#" class="back-btn" onclick="goToBatch()">
+                    <span>←</span>
+                    Back to Batch
+                </a>
+                <h2 class="page-title" id="branchPageTitle"></h2>
+                <p class="page-subtitle" id="branchPageSubtitle"></p>
+            </div>
+
+            <!-- Honor Roll Call Section -->
+            <div class="honor-section" id="branchHonorSection">
+                 <!-- Dynamically populated -->
+            </div>
+
+            <h3 class="section-title">Select Section</h3>
+            <div class="branches-grid" id="sectionsGrid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Details Page -->
+    <div class="page" id="sectionPage">
+        <div class="main-content">
+            <div class="page-header">
+                <a href="#" class="back-btn" onclick="goToBranch()">
+                    <span>←</span>
+                    Back to Branch
+                </a>
+                <h2 class="page-title" id="sectionPageTitle"></h2>
+                <p class="page-subtitle" id="sectionPageSubtitle"></p>
+            </div>
+
+            <div class="branches-grid" id="studentsGrid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div class="page" id="showprofilePage">
+        <div class="profile-page-container">
+            <div class="profile-content-wrapper">
+                <!-- Back Navigation -->
+                <div>
+                    <button id="profileBackBtn" class="profile-back-btn">
+                        ← Back
+                    </button>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="profile-main-card">
+                    <!-- Profile Header -->
+                    <div class="profile-header-new">
+                        <!-- Profile Picture -->
+                        <div class="profile-avatar-container">
+                            <div class="profile-avatar-new">
+                                <span id="profileAvatarLetter">K</span>
+                            </div>
+                            <!-- Add Photo Button -->
+                            <button class="profile-add-photo-btn edit-controls"
+                                 onclick="document.getElementById('profilePhotoInput').click();">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+         viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
+    </svg>
+  </button>
+                        </div>
+
+                        <!-- Profile Info -->
+                        <div class="profile-info-new">
+                            <h1 id="profileName"></h1>
+                            <p id="profileRollNo" class="roll-number"></p>
+                            <p id="profileEmail" class="email"></p>
+                            <div class="edit-instructions edit-controls">
+                                Click the pencil icons to edit your details
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Editable Profile Fields -->
+                    <div class="profile-fields-container">
+                        <!-- LinkedIn -->
+                        <div class="profile-field-item">
+                            <svg class="icon icon-linkedin" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect width="4" height="12" x="2" y="9" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                            <div class="profile-field-content-new">
+                                <label>LinkedIn Profile</label>
+                                <div class="content-line" data-field="linkedin_url">
+                                    <p class="editable-field">Not added yet</p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instagram -->
+                        <div class="profile-field-item">
+                            <svg class="icon icon-instagram" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                                <path d="m16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                            </svg>
+                            <div class="profile-field-content-new">
+                                <label>Socialmedia Handle</label>
+                                <div class="content-line" data-field="instagram_handle">
+                                    <p class="editable-field">Not added yet</p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="profile-field-item">
+                            <svg class="icon icon-phone" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                            <div class="profile-field-content-new">
+                                <label>Phone Number</label>
+                                <div class="content-line" data-field="phone_number">
+                                    <p class="editable-field">Not added yet</p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- personal quote -->
+                         <div class="profile-field-item">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2S6 3.75 6 5v8c0 5 4 8 8 8Z"/><path d="M21 21c-3 0-7-1-7-8V5c0-1.25.75-2 2-2s2 .75 2 2v8c0 5-4 8-8 8Z"/></svg>
+                            <div class="profile-field-content-new">
+                                <label>Personal Quote</label>
+                                <div class="content-line" data-field="personal_quote">
+                                    <p class="editable-field"></p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- message -->
+                         <div class="profile-field-item">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2S6 3.75 6 5v8c0 5 4 8 8 8Z"/><path d="M21 21c-3 0-7-1-7-8V5c0-1.25.75-2 2-2s2 .75 2 2v8c0 5-4 8-8 8Z"/></svg>
+                            <div class="profile-field-content-new">
+                                <label>Message</label>
+                                <div class="content-line" data-field="personal_quote">
+                                    <p class="editable-field"></p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Achievements -->
+                         <div class="profile-field-item">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2S6 3.75 6 5v8c0 5 4 8 8 8Z"/><path d="M21 21c-3 0-7-1-7-8V5c0-1.25.75-2 2-2s2 .75 2 2v8c0 5-4 8-8 8Z"/></svg>
+                            <div class="profile-field-content-new">
+                                <label>Achievements</label>
+                                <div class="content-line" data-field="personal_quote">
+                                    <p class="editable-field"></p>
+                                    <button class="profile-edit-btn edit-controls" onclick="toggleEdit(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Read-only Notice for Current Students -->
+                        <div id="readonlyNotice" class="profile-readonly-notice">
+                            <p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                                You are viewing as a current student. Profile editing is not available.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro.js Script -->
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+
+    <script>
+        // --- Global State ---
+        let currentUser = null;
+        let currentUserType = null;
+        let selectedBatch = '';
+        let selectedBranch = '';
+        let selectedSection = '';
+
+        // --- Core Application Logic & Page Navigation ---
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showLoginPage(type) {
+            showPage(type === 'graduated' ? 'graduatedLoginPage' : 'currentLoginPage');
+        }
+
+        function goBackToPrompt() {
+            showPage('promptPage');
+        }
+        
+        // --- Onboarding Tour ---
+        function startTourIfNeeded() {
+            if (localStorage.getItem('yearbookTourCompleted')) {
+                return; // Tour already completed, do nothing.
+            }
+
+            // Wait a bit for page animations to finish
+            setTimeout(() => {
+                introJs().setOptions({
+                    steps: [{
+                        intro: "👋 Welcome to the Digital Yearbook! Let's take a quick tour."
+                    }, {
+                        element: document.querySelector('.search-container'),
+                        intro: "🔍 Use this search bar to find students by name, roll number, or even by batch and branch."
+                    }, {
+                        element: document.querySelector('.batch-card'), // Target the first batch card
+                        intro: "🎓 These cards represent graduating batches. Click one to start exploring!"
+                    }, {
+                        element: document.querySelector('#creatorsBtn'),
+                        intro: "🎨 Click here to see who created this platform."
+                    }, {
+                        element: document.querySelector('.profile-btn'),
+                        intro: "👤 And this is your personal profile button. You can view and edit your details here."
+                    }],
+                    showProgress: true,
+                    showBullets: false,
+                    exitOnOverlayClick: false, // Good for a first-time tour
+                }).oncomplete(function() {
+                    localStorage.setItem('yearbookTourCompleted', 'true');
+                }).onexit(function() {
+                    localStorage.setItem('yearbookTourCompleted', 'true');
+                }).start();
+            }, 500); // 500ms delay to ensure elements are visible
+        }
+
+        // --- Authentication ---
+
+        async function login(event, type) {
+            event.preventDefault();
+            const form = event.target;
+            const roll_number = form.querySelector(type === 'graduated' ? '#grad-roll' : '#current-roll').value;
+            const password = form.querySelector(type === 'graduated' ? '#grad-password' : '#current-password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roll_number, password, user_type: type }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = data.user;
+                    currentUserType = data.user.user_type;
+                    showFlyingCaps();
+                    setTimeout(() => {
+                        populateHomePage();
+                        showPage('homePage');
+                        showNotification(`Welcome back, ${data.user.name}! 🎓`);
+                        startTourIfNeeded(); // Start the tour if it's the first time
+                    }, 1000);
+                } else {
+                    showAlert(data.message || 'Login failed!');
+                }
+            } catch (error) {
+                console.error('Login Error:', error);
+                showAlert('An error occurred. Please try again.');
+            }
+        }
+        
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            currentUser = null;
+            currentUserType = null;
+            showPage('promptPage');
+            showNotification("Logged out successfully! 👋");
+        }
+// --- Data Fetching & Page Population ---
+
+        async function populateHomePage() {
+            try {
+                const response = await fetch('/api/batches');
+                if (!response.ok) throw new Error('Failed to fetch batches');
+                const batchYears = await response.json();
+
+                const batchesGrid = document.getElementById('batchesGrid');
+                batchesGrid.innerHTML = ''; // Clear previous content
+                batchYears.forEach(year => {
+                    const card = `
+                        <div class="batch-card glass-card" onclick="selectBatch('${year}')">
+                            <span class="icon">🎓</span>
+                            <h3>Batch ${year}</h3>
+                            <p>Class of ${year}</p>
+                        </div>`;
+                    batchesGrid.innerHTML += card;
+                });
+            } catch (error) {
+                console.error('Error populating home page:', error);
+                showAlert('Could not load batch data.');
+            }
+        }
+
+        async function selectBatch(batch) {
+            selectedBatch = batch;
+            document.getElementById('batchPageTitle').textContent = `Batch ${batch}`;
+            
+            try {
+                const response = await fetch(`/api/batch/${batch}`);
+                if (!response.ok) throw new Error('Failed to fetch batch details');
+                const data = await response.json();
+                
+                // Populate Honor Roll
+                const honorSection = document.getElementById('batchHonorSection');
+                honorSection.innerHTML = '';
+                if(data.best_outgoing_student) {
+                    const student = data.best_outgoing_student;
+                    honorSection.innerHTML = `
+                        <h3 class="honor-title">🏆 Roll of Honor - Best Outgoing Student</h3>
+                        <div class="honor-frame">
+                            <div class="honor-frame-inner">
+                                <div class="honor-student">
+                                    <div class="honor-photo">${student.name.charAt(0)}</div>
+                                    <div class="honor-details">
+                                        <h3>${student.name}</h3>
+                                        <p><strong>Roll Number:</strong> ${student.roll_number}</p>
+                                        <p><strong>Branch:</strong> ${student.branch}</p>
+                                        <div class="honor-quote">"${student.personal_quote}"</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    honorSection.innerHTML = `<h3 class="honor-title">🏆 Roll of Honor - Data Not Available</h3>`;
+                }
+
+                // Populate Branches
+                const branchesGrid = document.getElementById('branchesGrid');
+                branchesGrid.innerHTML = '';
+                const branchIcons = { 'CSE': '💻', 'ECE': '📡', 'MECH': '⚙️', 'CIVIL': '🏗️', 'EEE': '⚡', 'AIML': '🤖', 'CST': '🖥️', 'ECT': '🔌', 'CAI': '🌐' };
+                data.branches.forEach(branchCode => {
+                    const card = `
+                        <div class="branch-card glass-card" onclick="selectBranch('${branchCode}')">
+                            <div class="icon">${branchIcons[branchCode] || '🏫'}</div>
+                            <h3>${branchCode}</h3>
+                        </div>`;
+                    branchesGrid.innerHTML += card;
+                });
+
+                showPage('batchPage');
+
+            } catch(error) {
+                console.error('Error selecting batch:', error);
+                showAlert('Could not load details for this batch.');
+            }
+        }
+        
+        async function selectBranch(branch) {
+            selectedBranch = branch;
+            document.getElementById('branchPageTitle').textContent = `${branch} - ${selectedBatch}`;
+            document.getElementById('branchPageSubtitle').textContent = `Batch ${selectedBatch}`;
+            
+            try {
+                const response = await fetch(`/api/branch/${selectedBatch}/${branch}`);
+                if (!response.ok) throw new Error('Failed to fetch branch details');
+                const data = await response.json();
+
+                // Populate Branch Topper
+                const honorSection = document.getElementById('branchHonorSection');
+                honorSection.innerHTML = '';
+                if(data.branch_topper) {
+                    const student = data.branch_topper;
+                     honorSection.innerHTML = `
+                        <h3 class="honor-title">🥇 Honor Roll Call - Top CGPA Student</h3>
+                        <div class="honor-frame">
+                            <div class="honor-frame-inner">
+                                <div class="honor-student">
+                                    <div class="honor-photo">${student.name.charAt(0)}</div>
+                                    <div class="honor-details">
+                                        <h3>${student.name}</h3>
+                                        <p><strong>Roll Number:</strong> ${student.roll_number}</p>
+                                        <p><strong>CGPA:</strong> ${student.cgpa}/10.0</p>
+                                        <div class="honor-quote">"${student.personal_quote}"</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                     honorSection.innerHTML = `<h3 class="honor-title">🥇 Honor Roll Call - Data Not Available</h3>`;
+                }
+
+                // Populate Sections
+                const sectionsGrid = document.getElementById('sectionsGrid');
+                sectionsGrid.innerHTML = '';
+                data.sections.forEach(sectionCode => {
+                    const card = `
+                        <div class="branch-card glass-card" onclick="selectSection('${sectionCode}')">
+                            <div class="icon">${sectionCode}</div>
+                            <h3>Section ${sectionCode}</h3>
+                            <p>View students from Section ${sectionCode}</p>
+                        </div>`;
+                    sectionsGrid.innerHTML += card;
+                });
+                showPage('branchPage');
+            } catch(error) {
+                console.error('Error selecting branch:', error);
+                showAlert('Could not load details for this branch.');
+            }
+        }
+        
+        async function selectSection(section) {
+            selectedSection = section;
+            document.getElementById('sectionPageTitle').textContent = `Section ${section} - ${selectedBranch}`;
+            document.getElementById('sectionPageSubtitle').textContent = `Batch ${selectedBatch}`;
+            
+            try {
+                const response = await fetch(`/api/section/${selectedBatch}/${selectedBranch}/${section}`);
+                if (!response.ok) throw new Error('Failed to fetch students');
+                const students = await response.json();
+
+                const studentsGrid = document.getElementById('studentsGrid');
+                studentsGrid.innerHTML = '';
+                students.forEach(student => {
+                    const card = `
+                        <div class="branch-card glass-card" onclick="viewStudentProfile('${student.roll_number}')">
+                            <div class="icon">🧑‍🎓</div>
+                            <h3>${student.name}</h3>
+                            <p>Roll No: ${student.roll_number}</p>
+                        </div>`;
+                    studentsGrid.innerHTML += card;
+                });
+                showPage('sectionPage');
+            } catch(error) {
+                console.error('Error selecting section:', error);
+                showAlert('Could not load students for this section.');
+            }
+        }
+
+
+        // --- Profile Management ---
+
+        async function viewStudentProfile(rollNumber) {
+            try {
+                const response = await fetch(`/api/profile/${rollNumber}`);
+                if (!response.ok) throw new Error('Could not fetch profile');
+                const studentData = await response.json();
+                
+                // A student is viewing another student's profile. Edits should be disabled.
+                populateProfilePage(studentData, false);
+                document.getElementById('profileBackBtn').onclick = goToSection;
+                showPage('showprofilePage');
+
+            } catch(error) {
+                console.error("Error viewing profile:", error);
+                showAlert('Could not load profile.');
+            }
+        }
+        
+        async function showProfilePage() {
+            // This shows the currently logged-in user's profile
+            if (!currentUser) {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                if(data.logged_in) currentUser = data.user;
+                else {
+                    logout();
+                    return;
+                }
+            }
+            // Logged-in user can edit if they are a graduate.
+            const canEdit = currentUser.user_type === 'graduated';
+            populateProfilePage(currentUser, canEdit);
+            document.getElementById('profileBackBtn').onclick = goToHome;
+            showPage('showprofilePage');
+        }
+
+        function populateProfilePage(user, canEdit) {
+            document.getElementById('profileAvatarLetter').textContent = user.name.charAt(0).toUpperCase();
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileRollNo').textContent = `Roll Number: ${user.roll_number}`;
+            document.getElementById('profileEmail').textContent = user.email;
+
+            // Populate fields
+            document.querySelector('[data-field="linkedin_url"] .editable-field').textContent = user.linkedin_url || 'Not added yet';
+            document.querySelector('[data-field="instagram_handle"] .editable-field').textContent = user.instagram_handle || 'Not added yet';
+            document.querySelector('[data-field="phone_number"] .editable-field').textContent = user.phone_number || 'Not added yet';
+            document.querySelector('[data-field="personal_quote"] .editable-field').textContent = user.personal_quote || 'Not added yet';
+
+            // Show/hide edit controls based on permissions
+            document.querySelectorAll('.edit-controls').forEach(control => {
+                control.style.display = canEdit ? '' : 'none';
+            });
+            document.getElementById('readonlyNotice').style.display = canEdit ? 'none' : 'block';
+        }
+
+        function toggleEdit(button) {
+            const contentLine = button.closest('.content-line');
+            const pTag = contentLine.querySelector('.editable-field');
+            const currentValue = pTag.textContent.trim();
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = (currentValue === 'Not added yet') ? '' : currentValue;
+            
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.className = 'save-btn';
+            saveBtn.onclick = () => saveEdit(saveBtn);
+            
+            pTag.replaceWith(input);
+            button.replaceWith(saveBtn);
+            input.focus();
+        }
+
+        async function saveEdit(button) {
+            const contentLine = button.closest('.content-line');
+            const input = contentLine.querySelector('input');
+            const fieldName = contentLine.dataset.field;
+            const newValue = input.value.trim();
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ [fieldName]: newValue }),
+                });
+
+                const data = await response.json();
+
+                if(!response.ok) throw new Error(data.message || 'Update failed');
+                
+                // Update was successful, now update the UI
+                currentUser = data.user; // Update global user object
+                const p = document.createElement('p');
+                p.className = 'editable-field';
+                p.textContent = newValue || 'Not added yet';
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'profile-edit-btn edit-controls';
+                editBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>`;
+                editBtn.onclick = () => toggleEdit(editBtn);
+
+                input.replaceWith(p);
+                button.replaceWith(editBtn);
+
+                showNotification('Profile updated successfully!');
+
+            } catch(error) {
+                console.error("Error saving edit:", error);
+                showAlert(error.toString());
+                // Optionally, revert the UI change on failure
+                toggleEdit(button); // This is a simple way to revert
+            }
+        }
+
+        // --- UI Navigation Helpers ---
+        function goToHome() { showPage('homePage'); }
+        function goToBatch() { showPage('batchPage'); }
+        function goToBranch() { showPage('branchPage'); }
+        function goToSection() { showPage('sectionPage'); }
+
+        // --- UI Effects & Utilities ---
+        
+        function initFloatingCaps() {
+            const container = document.getElementById('floatingCapsContainer');
+            const caps = ['🎓', '📚', '🏆', '✨', '🌟', '💫', '🎉'];
+            for (let i = 0; i < 20; i++) {
+                const cap = document.createElement('div');
+                cap.className = 'floating-cap';
+                cap.textContent = caps[Math.floor(Math.random() * caps.length)];
+                cap.style.left = Math.random() * 100 + 'vw';
+                cap.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                cap.style.animationDelay = Math.random() * 15 + 's';
+                cap.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                container.appendChild(cap);
+            }
+        }
+
+        function showFlyingCaps() {
+            const container = document.getElementById('flyingCapsContainer');
+            container.style.display = 'block';
+            container.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                const cap = document.createElement('div');
+                cap.className = 'flying-cap';
+                cap.textContent = '🎓';
+                cap.style.left = (10 + i * 7) + '%';
+                cap.style.animation = `flyUp 3s ease-out ${i * 0.2}s forwards`;
+                container.appendChild(cap);
+            }
+            setTimeout(() => { if (container) container.style.display = 'none'; }, 4000);
+        }
+
+        function toggleCreators() {
+            document.getElementById('creatorsDropdown').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function (e) {
+            const dropdown = document.getElementById('creatorsDropdown');
+            const btn = document.getElementById('creatorsBtn');
+            if (dropdown && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #4f46e5, #facc15); color: white; padding: 1rem 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); z-index: 1000; font-weight: 500; animation: slideInRight 0.5s ease-out; max-width: 350px; backdrop-filter: blur(10px);`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease-out forwards';
+                setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 500);
+            }, 4000);
+        }
+
+        function showAlert(message) {
+            showNotification(message); // Re-using notification for alerts
+        }
+        
+        function showSuggestions() {
+            showAlert('Suggestion Box - Share your wisdom with juniors! 💡 (Feature coming soon)');
+        }
+
+        // Add CSS keyframes for notifications dynamically
+        const style = document.createElement('style');
+        style.textContent = `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
+        document.head.appendChild(style);
+
+        // --- App Initialization ---
+        window.addEventListener('load', function () {
+            initFloatingCaps();
+            showNotification('Welcome to Caps Off For Future! 🎓✨');
+        });
+
+    </script>
+</body>
+
+</html>
